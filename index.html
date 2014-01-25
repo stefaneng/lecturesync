@@ -1,23 +1,46 @@
-<!doctype html>
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>LectureSync</title>
-    <script src="js/AudioContextMonkeyPatch.js"></script>
-    <script src="js/audiodisplay.js"></script>
-    <script src="js/recorder.js"></script>
-    <script src="js/main.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
-  </head>
   <body>
-    <div id="viz">
-      <canvas id="analyser" width="1024" height="500"></canvas>
-      <canvas id="wavedisplay" width="1024" height="500"></canvas>
-    </div>
-    <div id="controls">
-      <img id="record" src="img/mic128.png" onclick="toggleRecording(this);">
-      <img id="save" src="img/save.svg" onclick="saveAudio();">
-    </div>
+    <audio controls autoplay></audio>
+    <script type="text/javascript" src="js/recorder.js"> </script>
+
+    <input onclick="startRecording()" type="button" value="start recording" />
+    <input onclick="stopRecording()" type="button" value="stop recording and play" />
+
+    <script>
+      var onFail = function(e) {
+        console.log('Rejected!', e);
+      };
+
+      var onSuccess = function(s) {
+        var context = new webkitAudioContext();
+        var mediaStreamSource = context.createMediaStreamSource(s);
+        recorder = new Recorder(mediaStreamSource);
+        recorder.record();
+
+        // audio loopback
+        // mediaStreamSource.connect(context.destination);
+      }
+
+      window.URL = window.URL || window.webkitURL;
+      navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+      var recorder;
+      var audio = document.querySelector('audio');
+
+      function startRecording() {
+        if (navigator.getUserMedia) {
+          navigator.getUserMedia({audio: true}, onSuccess, onFail);
+        } else {
+          console.log('navigator.getUserMedia not present');
+        }
+      }
+
+      function stopRecording() {
+        recorder.stop();
+        recorder.exportWAV(function(s) {
+          audio.src = window.URL.createObjectURL(s);
+        });
+      }
+    </script>
   </body>
 </html>
