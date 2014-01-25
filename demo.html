@@ -1,0 +1,137 @@
+<html>
+<body>
+  <div>
+    <button id="start" onclick="goStart()">Start</button>
+    <button id="stop" onclick="goStop()" disabled>Stop</button>
+    <!--<button id="prev" onclick="goPrevious()">Previous</button> -->
+    <button id="next" onclick="goNextWrapper()">Next</button>
+    <button id="next" onclick="goReplay()">Replay</button>
+
+    &nbsp; &nbsp;
+    <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+  </div>
+  
+  <div>
+    <canvas id="the-canvas" style="border:1px solid black"></canvas>
+  </div>
+
+  <!-- Use latest PDF.js build from Github -->
+  <script src="jquery-1.10.2.min.js"></script>
+  <!-- <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
+  <script type="text/javascript" src="pdf.js"></script>
+  
+  <script type="text/javascript">
+    //
+    // NOTE: 
+    // Modifying the URL below to another server will likely *NOT* work. Because of browser
+    // security restrictions, we have to use a file server with special headers
+    // (CORS) - most servers don't support cross-origin browser requests.
+    //
+    var d = new Date();
+    var delay;
+    var doc = 'chicken.pdf';
+    var prev_time;
+    function delay_function(delay){
+      for(var i = 0; i < delay.length; i++)
+      {
+        setInterval(function(){goNext()},delay[i]);
+      }
+    }
+    // var url = 'http://cdn.mozilla.net/pdfjs/tracemonkey.pdf';
+
+    //
+    // Disable workers to avoid yet another cross-origin issue (workers need the URL of
+    // the script to be loaded, and currently do not allow cross-origin scripts)
+    //
+
+    PDFJS.disableWorker = true;
+
+    var pdfDoc = null,
+        pageNum = 1,
+        scale = 0.8,
+        canvas = document.getElementById('the-canvas'),
+        ctx = canvas.getContext('2d');
+
+    //
+    // Get page info from document, resize canvas accordingly, and render page
+    //
+    function renderPage(num) {
+      // Using promise to fetch the page
+      pdfDoc.getPage(num).then(function(page) {
+        var viewport = page.getViewport(scale);
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        // Render PDF page into canvas context
+        var renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        page.render(renderContext);
+      });
+
+      // Update page counters
+      document.getElementById('page_num').textContent = pageNum;
+      document.getElementById('page_count').textContent = pdfDoc.numPages;
+    }
+
+    function goStart(){
+        prev_time = d.getTime();
+        console.log(prev_time);
+        delay = [];
+        $("#start").prop("disabled", true);
+        $("#stop").prop("disabled", false);
+    }
+    function goStop(){
+        $("#start").prop("disabled", false);
+        $("#stop").prop("disabled", true);
+    }
+    //
+    // Go to previous page
+    //
+    function goPrevious() {
+      if (pageNum <= 1)
+        return;
+      pageNum--;
+      renderPage(pageNum);
+    }
+
+    //
+    // Go to next page
+    //
+    function goNext() {
+      if (pageNum >= pdfDoc.numPages)
+        return;
+      pageNum++;
+      renderPage(pageNum);
+    }
+
+    function goNextWrapper(){
+      if(prev_time != 0)
+      {
+        var d = new Date();
+        var temp_time = d.getTime();
+        console.log(temp_time);
+        delay.push(temp_time - prev_time);
+        prev_time = temp_time;
+      }
+      goNext();
+    }
+
+    function goReplay(){
+      pageNum = 1;
+      renderPage(pageNum);
+      console.log(delay);
+      delay_function(delay);
+    }
+    //
+    // Asynchronously download PDF as an ArrayBuffer
+    //
+    PDFJS.getDocument(doc).then(function(pdf){
+      pdfDoc = pdf;
+      renderPage(pageNum);
+    })
+
+  </script>  
+</body>
+</html>
