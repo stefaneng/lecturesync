@@ -5,7 +5,8 @@
     <button id="stop" onclick="goStop()" disabled>Stop</button>
     <!--<button id="prev" onclick="goPrevious()">Previous</button> -->
     <button id="next" onclick="goNextWrapper()">Next</button>
-    <button id="next" onclick="goReplay()">Replay</button>
+    <button id="replay" onclick="goReplay()">Replay</button>
+    <input type="file" id="PDFSelect" name="files[]" /> 
 
     &nbsp; &nbsp;
     <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
@@ -27,14 +28,14 @@
     // security restrictions, we have to use a file server with special headers
     // (CORS) - most servers don't support cross-origin browser requests.
     //
-    var d = new Date();
+    var d ;
     var delay;
     var doc = 'chicken.pdf';
     var prev_time;
     function delay_function(delay){
       for(var i = 0; i < delay.length; i++)
       {
-        setInterval(function(){goNext()},delay[i]);
+        setTimeout(function(){goNext()},delay[i]);
       }
     }
     // var url = 'http://cdn.mozilla.net/pdfjs/tracemonkey.pdf';
@@ -76,6 +77,7 @@
     }
 
     function goStart(){
+        d = new Date();
         prev_time = d.getTime();
         console.log(prev_time);
         delay = [];
@@ -113,7 +115,6 @@
         var temp_time = d.getTime();
         console.log(temp_time);
         delay.push(temp_time - prev_time);
-        prev_time = temp_time;
       }
       goNext();
     }
@@ -127,11 +128,33 @@
     //
     // Asynchronously download PDF as an ArrayBuffer
     //
-    PDFJS.getDocument(doc).then(function(pdf){
-      pdfDoc = pdf;
-      renderPage(pageNum);
-    })
 
+    function handleFileSelect(evt) {
+      var files = evt.target.files; // FileList object
+
+      for (var i = 0, f; f = files[i]; i++) {
+
+      var reader = new FileReader();
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+          return function(e) {
+            // Render thumbnail.
+            doc = e.target.result;
+            console.log("Link:" + doc);
+            //document.getElementById('list').insertBefore(span, null);
+            PDFJS.getDocument(doc).then(function(pdf){
+              pdfDoc = pdf;
+              renderPage(pageNum);
+            })
+          };
+        })(f);
+        // Read in the file as a data URL.
+        reader.readAsDataURL(f);
+      }
+    }
+
+  document.getElementById("PDFSelect").addEventListener("change", handleFileSelect, false);
+  //http://www.html5rocks.com/en/tutorials/file/dndfiles/
   </script>
 </body>
 </html>
