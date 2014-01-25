@@ -10,19 +10,19 @@
     &nbsp; &nbsp;
     <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
   </div>
-  
+
   <div>
     <canvas id="the-canvas" style="border:1px solid black"></canvas>
   </div>
 
   <!-- Use latest PDF.js build from Github -->
-  <script src="jquery-1.10.2.min.js"></script>
+  <script src="js/jquery-1.10.2.min.js"></script>
   <!-- <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
-  <script type="text/javascript" src="pdf.js"></script>
-  
+  <script type="text/javascript" src="js/pdf.js"></script>
+
   <script type="text/javascript">
     //
-    // NOTE: 
+    // NOTE:
     // Modifying the URL below to another server will likely *NOT* work. Because of browser
     // security restrictions, we have to use a file server with special headers
     // (CORS) - most servers don't support cross-origin browser requests.
@@ -132,6 +132,6 @@
       renderPage(pageNum);
     })
 
-  </script>  
+  </script>
 </body>
 </html>
