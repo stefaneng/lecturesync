@@ -5,17 +5,18 @@
     <!-- Use latest PDF.js build from Github -->
     <script src="js/jquery-1.10.2.min.js"></script>
     <!-- <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
+    <script type="text/javascript" src="js/AudioContextMonkeyPatch.js"></script>
     <script type="text/javascript" src="js/pdf.js"></script>
     <script type="text/javascript" src="js/recorder.js"> </script>
-    <script type="text/javascript" src="js/audio.js"></script>
+    <script type="text/javascript" src="js/alt-audio.js"></script>
   </head>
 <body>
   <div>
-    <button id="start" onclick="goStart()">Start</button>
-    <button id="stop" onclick="goStop()" disabled>Stop</button>
+    <button id="start" onclick="toggleRecording(this); goStart()">Start</button>
+    <button id="stop" onclick="saveAudio(); goStop()" disabled>Stop</button>
     <!--<button id="prev" onclick="goPrevious()">Previous</button> -->
     <button id="next" onclick="goNextWrapper()">Next</button>
-    <button id="replay" onclick="goReplay()">Replay</button>
+    <button id="replay" onclick="audio.play(); goReplay()">Replay</button>
     <input type="file" id="PDFSelect" name="files[]" />
 
     &nbsp; &nbsp;
@@ -82,7 +83,8 @@
     }
 
     function goStart(){
-        startRecording();
+//        startRecording();
+//     toggleRecording(this);
         d = new Date();
         prev_time = d.getTime();
         console.log(prev_time);
@@ -91,7 +93,8 @@
         $("#stop").prop("disabled", false);
     }
     function goStop(){
-        stopRecording();
+//        stopRecording();
+  //   saveAudio();
         $("#start").prop("disabled", false);
         $("#stop").prop("disabled", true);
     }
@@ -127,7 +130,9 @@
     }
 
     function goReplay(){
-     startReplay();
+//     startReplay();
+//     audio.play();
+//     saveAudio();
      pageNum = 1;
 //     renderPage(pageNum);
      console.log(delay);
@@ -164,6 +169,6 @@
   document.getElementById("PDFSelect").addEventListener("change", handleFileSelect, false);
   //http://www.html5rocks.com/en/tutorials/file/dndfiles/
   </script>
-  <audio controls autoplay></audio>
+  <audio controls></audio>
 </body>
 </html>
