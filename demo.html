@@ -1,4 +1,14 @@
+<!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <!-- Use latest PDF.js build from Github -->
+    <script src="js/jquery-1.10.2.min.js"></script>
+    <!-- <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
+    <script type="text/javascript" src="js/pdf.js"></script>
+    <script type="text/javascript" src="js/recorder.js"> </script>
+    <script type="text/javascript" src="js/audio.js"></script>
+  </head>
 <body>
   <div>
     <button id="start" onclick="goStart()">Start</button>
@@ -6,7 +16,7 @@
     <!--<button id="prev" onclick="goPrevious()">Previous</button> -->
     <button id="next" onclick="goNextWrapper()">Next</button>
     <button id="replay" onclick="goReplay()">Replay</button>
-    <input type="file" id="PDFSelect" name="files[]" /> 
+    <input type="file" id="PDFSelect" name="files[]" />
 
     &nbsp; &nbsp;
     <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
@@ -15,11 +25,6 @@
   <div>
     <canvas id="the-canvas" style="border:1px solid black"></canvas>
   </div>
-
-  <!-- Use latest PDF.js build from Github -->
-  <script src="js/jquery-1.10.2.min.js"></script>
-  <!-- <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
-  <script type="text/javascript" src="js/pdf.js"></script>
 
   <script type="text/javascript">
     //
@@ -77,6 +82,7 @@
     }
 
     function goStart(){
+        startRecording();
         d = new Date();
         prev_time = d.getTime();
         console.log(prev_time);
@@ -85,6 +91,7 @@
         $("#stop").prop("disabled", false);
     }
     function goStop(){
+        stopRecording();
         $("#start").prop("disabled", false);
         $("#stop").prop("disabled", true);
     }
@@ -120,10 +127,11 @@
     }
 
     function goReplay(){
-      pageNum = 1;
-      renderPage(pageNum);
-      console.log(delay);
-      delay_function(delay);
+     startReplay();
+     pageNum = 1;
+//     renderPage(pageNum);
+     console.log(delay);
+  //   delay_function(delay);
     }
     //
     // Asynchronously download PDF as an ArrayBuffer
@@ -156,5 +164,6 @@
   document.getElementById("PDFSelect").addEventListener("change", handleFileSelect, false);
   //http://www.html5rocks.com/en/tutorials/file/dndfiles/
   </script>
+  <audio controls autoplay></audio>
 </body>
 </html>
