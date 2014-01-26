@@ -1,11 +1,13 @@
 <html>
+  <head>
+    <script type="text/javascript" src="js/AudioContextMonkeyPatch.js"></script>
+    <script type="text/javascript" src="js/recorder.js"></script>
+    <script type="text/javascript" src="js/alt-audio.js"></script>
+  </head>
   <body>
     <audio controls autoplay></audio>
-    <script type="text/javascript" src="js/recorder.js"> </script>
-
-    <input onclick="startRecording()" type="button" value="start recording" />
-    <input onclick="stopRecording()" type="button" value="stop recording and play" />
-
-    <script type="text/javascript" src="js/audio.js"></script>
+    <input onclick="toggleRecording(this)" type="button" value="start recording" />
+    <input onclick="saveAudio()" type="button" value="stop recording and play" />
+    <!--    <script type="text/javascript" src="js/audio.js"></script>-->
   </body>
 </html>
